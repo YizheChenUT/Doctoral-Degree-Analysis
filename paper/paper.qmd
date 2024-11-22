@@ -1,6 +1,7 @@
 ---
 title: "IPUMS 2022 ACS Data Analysis Using Ratio Estimation"
 subtitle: "Estimating State-Level Populations Using Ratio Estimation"
+abstract: "This study uses the ratio estimation method to analyze state-level population data from the 2022 ACS. By using California's known respondent data as a reference, the method estimates populations in other states based on the ratio of doctoral degree holders. The analysis highlights differences between estimates and actual figures, driven by demographic diversity and sampling variability, offering insights into the strengths and limitations of ratio estimation in demographic research."
 author: 
   - Yizhe Chen
   - Charlie Zhang
@@ -54,7 +55,7 @@ Ratio = Number of doctoral holders in California / 391171
 We apply this ratio to the number of doctoral degree holders in other states to estimate their total respondent numbers.
 
 # Estimates and the Actual Number of Respondents
-We computed the estimated total respondents based on the ratio estimator approach. @tbl-estimated-actual-doctoral showing the estimated number of respondents and the actual number of doctoral degree holders in each state.
+We computed the estimated total respondents based on the ratio estimator approach. @tbl-estimated-actual-doctoral established by the tidyverse package [@tidyverse] shows the estimated number of respondents and the actual number of doctoral degree holders in each state.
 ```{r}
 #| echo: false
 #| eval: true
