@@ -10,8 +10,8 @@ This analysis examines the relationship between the number of doctoral degree ho
 The repo is structured as:
 
 -   `paper` contains the files used to generate the paper, including the Quarto document and reference bibliography file, as well as the PDF of the paper. 
--   `scripts` contains the R scripts used to download and address data.
-
+-   `scripts` contains the R scripts used to simulate, address and test data.
+-   `data` contains simulated dataset.
 
 ## License
 
