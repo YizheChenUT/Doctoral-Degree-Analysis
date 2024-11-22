@@ -1,7 +1,7 @@
 #### Preamble ####
-# Purpose: Tests the structure and validity of the simulated U.S. presidential election polling dataset.
+# Purpose: Tests the structure and validity of the simulated data.
 # Author: Yizhe Chen
-# Date: 3 Nov 2024
+# Date: 21 Nov 2024
 # Contact: yz.chen@mail.utoronto.ca
 # License: MIT
 # Pre-requisites:
@@ -12,85 +12,51 @@
 
 #### Workspace setup ####
 library(tidyverse)
-library(arrow)
+library(testthat)
 
 # Load the simulated dataset
-simulated_data <- read_parquet("data/00-simulated_data/simulated_data.parquet")
-
-# Test if the data was successfully loaded
-if (exists("simulated_data")) {
-  message("Test Passed: The dataset was successfully loaded.")
-} else {
-  stop("Test Failed: The dataset could not be loaded.")
-}
-
+simulated_data <- read_csv("data/simulated_data.csv")
 
 #### Test data ####
+test_that("Simulated dataset has the correct structure", {
+  # Check that the dataset has the expected columns
+  expected_columns <- c(
+    "STATEICP", "estimated_doctoral", "estimate_total",
+    "count_doctoral", "difference", "state"
+  )
+  expect_equal(names(simulated_data), expected_columns)
+  
+  # Check that the dataset has 50 rows (one for each state)
+  expect_equal(nrow(simulated_data), 50)
+})
 
-# Check if the dataset has 200 rows
-if (nrow(simulated_data) == 200) {
-  message("Test Passed: The dataset has 200 rows.")
-} else {
-  stop("Test Failed: The dataset does not have 200 rows.")
-}
+test_that("Simulated dataset values are within expected ranges", {
+  # Check that STATEICP is an integer between 1 and 50
+  expect_true(all(simulated_data$STATEICP >= 1 & simulated_data$STATEICP <= 50))
+  
+  # Check that estimated_doctoral is between 100 and 2000
+  expect_true(all(simulated_data$estimated_doctoral >= 100 & simulated_data$estimated_doctoral <= 2000))
+  
+  # Check that estimate_total is between 10,000 and 50,000
+  expect_true(all(simulated_data$estimate_total >= 10000 & simulated_data$estimate_total <= 50000))
+  
+  # Check that count_doctoral is between 100 and 2000
+  expect_true(all(simulated_data$count_doctoral >= 100 & simulated_data$count_doctoral <= 2000))
+  
+  # Check that difference is between 5,000 and 10,000
+  expect_true(all(simulated_data$difference >= 5000 & simulated_data$difference <= 10000))
+})
 
-# Check if the dataset has 6 columns
-if (ncol(simulated_data) == 6) {
-  message("Test Passed: The dataset has 6 columns.")
-} else {
-  stop("Test Failed: The dataset does not have 6 columns.")
-}
+test_that("Logical relationships between columns are valid", {
+  # Check that count_doctoral does not exceed estimate_total
+  expect_true(all(simulated_data$count_doctoral <= simulated_data$estimate_total))
+  
+  # Check that difference is non-negative
+  expect_true(all(simulated_data$difference >= 0))
+})
 
-# Check if the 'poll_id' column values are unique
-if (n_distinct(simulated_data$poll_id) == nrow(simulated_data)) {
-  message("Test Passed: All values in 'poll_id' are unique.")
-} else {
-  stop("Test Failed: The 'poll_id' column contains duplicate values.")
-}
+test_that("Categorical columns contain expected values", {
+  # Check that state column contains unique names
+  expect_equal(length(unique(simulated_data$state)), 50)
+})
 
-# Check if the 'party' column contains only valid U.S. party names
-valid_parties <- c("Democrat", "Republican", "Independent", "Green")
-
-if (all(simulated_data$party %in% valid_parties)) {
-  message("Test Passed: The 'party' column contains only valid U.S. party names.")
-} else {
-  stop("Test Failed: The 'party' column contains invalid party names.")
-}
-
-# Check if the 'sample_size' column has realistic values (between 500 and 3000)
-if (all(simulated_data$sample_size >= 500 & simulated_data$sample_size <= 3000)) {
-  message("Test Passed: The 'sample_size' column values are within the realistic range.")
-} else {
-  stop("Test Failed: The 'sample_size' column has values outside the realistic range.")
-}
-
-# Check if 'end_date' values are within 6 months prior to 2024-11-05
-min_date <- as.Date("2024-05-05")
-max_date <- as.Date("2024-11-05")
-
-if (all(simulated_data$end_date >= min_date & simulated_data$end_date <= max_date)) {
-  message("Test Passed: The 'end_date' column values are within the expected date range.")
-} else {
-  stop("Test Failed: The 'end_date' column contains dates outside the expected range.")
-}
-
-# Check if 'pct' column has values between 25% and 75%
-if (all(simulated_data$pct >= 25 & simulated_data$pct <= 75)) {
-  message("Test Passed: The 'pct' column values are within the realistic range of 25-75%.")
-} else {
-  stop("Test Failed: The 'pct' column has values outside the realistic range.")
-}
-
-# Check if there are no missing values in the dataset
-if (all(!is.na(simulated_data))) {
-  message("Test Passed: The dataset contains no missing values.")
-} else {
-  stop("Test Failed: The dataset contains missing values.")
-}
-
-# Check if 'party' column has at least two unique values (to confirm variability)
-if (n_distinct(simulated_data$party) >= 2) {
-  message("Test Passed: The 'party' column contains at least two unique values.")
-} else {
-  stop("Test Failed: The 'party' column contains less than two unique values.")
-}

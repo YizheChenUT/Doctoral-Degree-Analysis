@@ -1,7 +1,7 @@
 #### Preamble ####
-# Purpose: Tests the structure and validity of the cleaned presidential polling dataset.
+# Purpose: Tests the structure and validity of the cleaned dataset.
 # Author: Yizhe Chen
-# Date: 3 Nov 2024
+# Date: 21 Nov 2024
 # Contact: yz.chen@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: The `tidyverse` and `testthat` packages must be installed and loaded
@@ -10,65 +10,43 @@
 #### Workspace setup ####
 library(tidyverse)
 library(testthat)
-library(arrow)
 
 # Read data from Parquet file
-data <- read_parquet("data/02-analysis_data/analysis_data.parquet")
+test_data <- read_csv("data/comparison_results.csv")
 
 
 #### Test data ####
-
-# Test that the dataset has more than 100 rows (adjust as needed for expected data size)
-test_that("dataset has more than 100 rows", {
-  expect_gt(nrow(data), 100)
+test_that("Dataset has the correct structure", {
+  # Check that the dataset has the expected columns
+  expected_columns <- c(
+    "STATEICP", "estimated_doctoral", "estimate_total",
+    "count_doctoral", "difference"
+  )
+  expect_equal(names(test_data), expected_columns)
+  
+  # Check that there are rows in the dataset
+  expect_gt(nrow(test_data), 0)
 })
 
-# Test that the dataset has 8 columns (poll_id, pollster, candidate_name, pct, party, start_date, end_date, sample_size)
-test_that("dataset has 8 columns", {
-  expect_equal(ncol(data), 8)
+test_that("Column values are within expected ranges", {
+  # Check that STATEICP is an integer between 1 and 98
+  expect_true(all(test_data$STATEICP >= 1 & test_data$STATEICP <= 98))
+  
+  # Check that estimated_doctoral is non-negative
+  expect_true(all(test_data$estimated_doctoral >= 0))
+  
+  # Check that estimate_total is greater than or equal to count_doctoral
+  expect_true(all(test_data$estimate_total >= test_data$count_doctoral))
+  
+  # Check that difference is non-negative
+  expect_true(all(test_data$difference >= 0))
 })
 
-# Test that columns are of the expected types
-test_that("columns have correct data types", {
-  expect_type(data$poll_id, "double")
-  expect_type(data$pollster, "character")
-  expect_type(data$candidate_name, "integer")
-  expect_type(data$pct, "double")
-  expect_type(data$party, "character")
-  expect_type(data$sample_size, "double")
-})
-
-# Test that 'pct' column values are within the range of 0 to 100
-test_that("pct values are between 0 and 100", {
-  expect_true(all(data$pct >= 0 & data$pct <= 100))
-})
-
-
-# Test that 'sample_size' has realistic values (not more than 5000)
-test_that("'sample_size' column values are within a realistic range", {
-  expect_true(all(data$data$sample_size <= 5000))
-})
-
-
-# Test that 'party' column has at least 2 unique values to ensure variability
-test_that("'party' column contains at least 2 unique values", {
-  expect_true(length(unique(data$party)) >= 2)
-})
-
-
-# Test that 'pollster' column only contains "YouGov" since we filtered for this in cleaning
-test_that("pollster column contains only 'YouGov'", {
-  expect_true(all(data$pollster == "YouGov"))
-})
-
-
-# Test that 'pct' column has no negative values
-test_that("'pct' column has no negative values", {
-  expect_true(all(data$pct >= 0))
-})
-
-
-# Test that 'candidate_name' column has at least 3 unique names (to ensure variability)
-test_that("'candidate_name' column has at least 3 unique values", {
-  expect_true(length(unique(data$candidate_name)) >= 3)
+test_that("Logical relationships hold", {
+  # Check that the sum of count_doctoral is less than or equal to the sum of estimate_total
+  expect_true(sum(test_data$count_doctoral) <= sum(test_data$estimate_total))
+  
+  # Check that difference matches the expected calculation (estimate_total - count_doctoral)
+  calculated_difference <- test_data$estimate_total - test_data$count_doctoral
+  expect_equal(round(test_data$difference, 2), round(calculated_difference, 2))
 })
