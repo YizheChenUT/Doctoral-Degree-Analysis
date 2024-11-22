@@ -1,11 +1,11 @@
 ---
 title: "IPUMS 2022 ACS Data Analysis Using Ratio Estimation"
-# subtitle:
+subtitle: "Estimating State-Level Populations Using Ratio Estimation"
 author: 
   - Yizhe Chen
   - Charlie Zhang
   - Qizhou Xie
-thanks: "Code and data are available at: https://github.com/YizheChenUT/STA304-5-Energy-and-Danceability-Analysis.git"
+thanks: "Code and data are available at: [https://github.com/YizheChenUT/Doctoral-Degree-Analysis.git](https://github.com/YizheChenUT/Doctoral-Degree-Analysis.git)"
 date: today
 date-format: long
 format: pdf
@@ -23,6 +23,12 @@ library(tidyverse)
 
 ```
 
+# Introduction
+This analysis explores the use of the ratio estimator method through R language [@citeR] to evaluate population characteristics based on the 2022 American Community Survey (ACS) data obtained from IPUMS USA [@ipumsusa]. By using detailed state-level data on doctoral degree holders and total respondents, the study aims to estimate population metrics for states across the U.S. The method assumes that the relationship observed in a reference state (California) can be extended to other states to derive meaningful approximations.
+
+The dataset includes variables such as STATEICP (state identifiers) and EDUCD (educational attainment), enabling the calculation of a ratio for doctoral degree holders relative to the total population in California. This ratio is applied to other states, allowing for estimations of their total respondent numbers.
+
+The analysis also highlights discrepancies between estimated and actual values, investigating contributing factors such as demographic diversity, sampling variability, and state-level educational trends. This study provides a foundation for understanding the application of ratio estimators in demographic analysis and underscores the potential challenges when generalizing from a single-state reference point.
 
 # Instructions on How to Obtain the Data
 To obtain the IPUMS 2022 ACS data [@ipumsusa]:
