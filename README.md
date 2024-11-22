@@ -13,6 +13,10 @@ The repo is structured as:
 -   `scripts` contains the R scripts used to simulate, address and test data.
 -   `data` contains simulated dataset.
 
+## Statement on LLM usage
+
+Aspects of the code were written with the help of ChatGPT. The entire chat history is available in `other/llm_usage/usage.txt`.
+
 ## License
 
 This project is for educational purposes only. Please refer to the [IPUMS USA usage policy](https://ipums.org/) for data-related restrictions.
